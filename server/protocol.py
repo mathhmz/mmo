@@ -1,5 +1,5 @@
 import queue
-from server import packet
+import packet
 
 from autobahn.twisted.websocket import WebSocketServerProtocol
 
@@ -7,9 +7,8 @@ class GameServerProtocol(WebSocketServerProtocol):
     
     def __init__(self):
         super().__init__()
-        
-        self._packet_queue = queue.Queue[tuple['GameServerProtocol', packet.Packet]] = queue.Queue
-        self._state: callable = True
+        self._packet_queue: queue.Queue[tuple['GameServerProtocol', packet.Packet]] = queue.Queue()
+        self._state: callable = self.PLAY
         
     def PLAY(self, sender: 'GameServerProtocol', p: packet.Packet):
         pass
@@ -42,7 +41,7 @@ class GameServerProtocol(WebSocketServerProtocol):
         
     def onClose(self, wasClean, code, reason):
         self.factory.players.remove(self)
-        print(f'Websocket connection closed{'Unexpectadly' if not wasClean else 'Cleanly'} with code {code} : {reason}')
+        print(f'Websocket connection closed{"Unexpectadly" if not wasClean else "Cleanly"} with code {code} : {reason}')
         
         
     def onMessage(self, payload, isBinary):
@@ -51,7 +50,7 @@ class GameServerProtocol(WebSocketServerProtocol):
         try:
             p: packet.Packet = packet.from_json(decoded_payload)
         except Exception as e:
-            print(f'Could not load message as a packet: {e}, message was: {payload.decode('utf-8')}')
+            print(f"Could not load message as packet: {e}. Message was: {payload.decode('utf8')}")
             
         self.onPacket(self, p)
         
