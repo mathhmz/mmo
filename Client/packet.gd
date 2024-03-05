@@ -1,19 +1,21 @@
 extends Object
 
-
 var action: String
 var payloads: Array
+
 
 func _init(_action: String, _payloads: Array):
 	action = _action
 	payloads = _payloads
 
+
 func tostring() -> String:
-	var serialize_dict: Dictionary = {"a": action}
+	var serlialize_dict: Dictionary = {"a": action}
 	for i in range(len(payloads)):
-		serialize_dict["p%d" % i] = payloads[i]
-	var data: String = JSON.print(serialize_dict)
+		serlialize_dict["p%d" % i] = payloads[i]
+	var data: String = JSON.print(serlialize_dict)
 	return data
+
 
 static func json_to_action_payloads(json_str: String) -> Array:
 	var action: String
